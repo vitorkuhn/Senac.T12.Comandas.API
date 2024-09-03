@@ -1,2 +1,2 @@
-# Senac.T12.Comandas.API
-Api de gerenciamento de comandas
+# Senac.T12.Comandas.Api
+Api de Comandas Senac

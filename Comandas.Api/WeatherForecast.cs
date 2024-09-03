@@ -1,4 +1,4 @@
-namespace WebApplication1
+namespace Comandas.Api
 {
     public class WeatherForecast
     {
