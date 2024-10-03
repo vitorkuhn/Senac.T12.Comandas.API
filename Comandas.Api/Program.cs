@@ -1,7 +1,18 @@
 using Microsoft.EntityFrameworkCore;
 using SistemaDeComandas.BancoDeDados;
 
+
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowSpecificOrigins",
+        policy =>
+        {
+            policy.AllowAnyOrigin()
+                  .AllowAnyHeader()
+                  .AllowAnyMethod();
+        });
+});
 
 // Add services to the container.
 
@@ -29,6 +40,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseCors("AllowSpecificOrigins");
 app.UseAuthorization();
 
 app.MapControllers();
