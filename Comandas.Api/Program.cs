@@ -1,20 +1,18 @@
+using Comandas.Api;
 using Microsoft.EntityFrameworkCore;
 using SistemaDeComandas.BancoDeDados;
 
-
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowSpecificOrigins",
-        policy =>
-        {
-            policy.AllowAnyOrigin()
-                  .AllowAnyHeader()
-                  .AllowAnyMethod();
-        });
-});
 
 // Add services to the container.
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(
+        policy =>
+        {
+            policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+        });
+});
 
 // obtem o endereco do banco de dados
 var conexao = builder.Configuration.GetConnectionString("Conexao");
@@ -31,6 +29,18 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
+// AQUI criação do banco
+using (var e = app.Services.CreateScope())
+{
+    var contexto = e.ServiceProvider
+        .GetRequiredService<ComandaContexto>();
+
+    contexto.Database.Migrate();
+    // Semear os dados iniciais
+    InicializarDados.Semear(contexto);
+}
+
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -40,7 +50,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseCors("AllowSpecificOrigins");
+app.UseCors();
+
 app.UseAuthorization();
 
 app.MapControllers();
